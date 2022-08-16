@@ -1,0 +1,33 @@
+name: Build and test Go
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go ${{ matrix.goVer }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18"
+          check-latest: true
+
+      - name: Check out source code
+        uses: actions/checkout@v3
+
+      - name: Unit test
+        run: go test -v ./...
+
+      # - name: Staticcheck
+      #   run: |
+      #     export PATH=${PATH}:`go env GOPATH`/bin
+      #     go get -u honnef.co/go/tools/cmd/staticcheck
+      #     staticcheck ./...
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
