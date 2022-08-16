@@ -7,11 +7,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        goVer: ["1.17", "1.18", "1.19"]
     steps:
       - name: Set up Go 1.18
         uses: actions/setup-go@v3
         with:
-          go-version-file: "go.mod"
+          go-version: ${{ matrix.goVer }}
           check-latest: true
           cache: true
 
@@ -34,11 +35,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        goVer: ["1.17", "1.18", "1.19"]
     steps:
-      - name: Set up Go 1.18
+      - name: Set up Go ${{ matrix.goVer }}
         uses: actions/setup-go@v3
         with:
-          go-version-file: "go.mod"
+          go-version: ${{ matrix.goVer }}
           check-latest: true
           cache: true
 
