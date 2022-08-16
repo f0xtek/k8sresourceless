@@ -1,8 +1,8 @@
 name: Build and test Go
 on: [push, pull_request]
 jobs:
-  test:
-    name: Test
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -15,38 +15,24 @@ jobs:
           check-latest: true
           # cache: true
 
-      - name: Unit
-        env:
-          GOPROXY: "https://proxy.golang.org"
-        run: go test -v ./...
-
-      - name: Staticcheck
-        env:
-          GOPROXY: "https://proxy.golang.org"
-        run: |
-          go get -u honnef.co/go/tools/cmd/staticcheck
-          staticcheck ./...
-  build:
-    name: Build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        goVer: ["1.17", "1.18", "1.19"]
-    steps:
-      - name: Set up Go ${{ matrix.goVer }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.goVer }}
-          check-latest: true
-          # cache: true
-
       - name: Check out source code
         uses: actions/checkout@v3
 
+      - name: Unit test
+        # env:
+        #   GOPROXY: "https://proxy.golang.org"
+        run: go test -v ./...
+
+      - name: Staticcheck
+        # env:
+        #   GOPROXY: "https://proxy.golang.org"
+        run: |
+          go get -u honnef.co/go/tools/cmd/staticcheck
+          staticcheck ./...
+
       - name: Build
-        env:
-          GOPROXY: "https://proxy.golang.org"
+        # env:
+        #   GOPROXY: "https://proxy.golang.org"
         run: go build ./cmd
 
       - name: Run GoReleaser
