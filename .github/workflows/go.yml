@@ -1,64 +1,27 @@
 name: Build and test Go
 on: [push, pull_request]
 jobs:
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    steps:
-      - name: Set up Go 1.18
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: "go.mod"
-          check-latest: true
-          cache: true
-
-      - name: Unit
-        env:
-          GOPROXY: "https://proxy.golang.org"
-        run: go test -v ./...
-
-      - name: Staticcheck
-        run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:`go env GOPATH`/bin
-          go get -u honnef.co/go/tools/cmd/staticcheck
-          staticcheck ./...
   build:
-    name: Build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Build and Test
+    runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.18
+      - name: Set up Go ${{ matrix.goVer }}
         uses: actions/setup-go@v3
         with:
-          go-version-file: "go.mod"
+          go-version: "1.18"
           check-latest: true
-          cache: true
 
       - name: Check out source code
         uses: actions/checkout@v3
 
-      - name: Cache Go modules
-        uses: actions/cache@preview
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+      - name: Unit test
+        run: go test -v ./...
 
-      - name: Build
-        env:
-          GOPROXY: "https://proxy.golang.org"
-        run: go build ./cmd
+      # - name: Staticcheck
+      #   run: |
+      #     export PATH=${PATH}:`go env GOPATH`/bin
+      #     go get -u honnef.co/go/tools/cmd/staticcheck
+      #     staticcheck ./...
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
