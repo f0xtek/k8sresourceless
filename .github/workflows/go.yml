@@ -23,13 +23,13 @@ jobs:
         #   GOPROXY: "https://proxy.golang.org"
         run: go test -v ./...
 
-      - name: Staticcheck
-        # env:
-        #   GOPROXY: "https://proxy.golang.org"
-        run: |
-          export PATH=${PATH}:`go env GOPATH`/bin
-          go get -u honnef.co/go/tools/cmd/staticcheck
-          staticcheck ./...
+      # - name: Staticcheck
+      #   # env:
+      #   #   GOPROXY: "https://proxy.golang.org"
+      #   run: |
+      #     export PATH=${PATH}:`go env GOPATH`/bin
+      #     go get -u honnef.co/go/tools/cmd/staticcheck
+      #     staticcheck ./...
 
       - name: Build
         # env:
