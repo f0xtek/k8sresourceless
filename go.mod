@@ -1,6 +1,6 @@
 module github.com/f0xtek/k8sresourcess
 
-go 1.18
+go 1.20
 
 require (
 	github.com/rs/zerolog v1.27.0
